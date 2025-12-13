@@ -87,7 +87,7 @@
       <h2 style="text-align:center;">Exemplo</h2>
       <p style="font-size: 110%; margin-bottom: 0;"> Este é um exemplo para te ajudar a entender o experimento:</p>
       <p style="font-size: 110%; margin-top: 7px;">
-        Ao visitar Carlos, Elaine viu algumas garrafas de azeite de dendê na cozinha e perguntou por que motivo era ele tinha tantas. Carlos respondeu: </p>
+        Ao visitar Carlos, Elaine viu algumas garrafas de azeite de dendê na cozinha e perguntou por que motivo ele tinha tantas. Carlos respondeu: </p>
       <p style="font-size: 110%; font-style: italic; margin-top: 7px;">
         “Meu tio mora na Bahia.”
       </p>
@@ -166,7 +166,7 @@
         "Maria adora o recesso",
         "Nenhuma das opções"
       ],
-      correct_choice_text: "João considera que a solução não funciona"
+      correct_choice_text: "Elas terão que trabalhar durante o recesso"
     },
 
     {
@@ -213,7 +213,7 @@
 
     {
       label: "I3",
-      context: "Maria e Olivia estão conversando sobre a enorme quantidade de trabalho que têm para fazer até o final do ano e como têm pouco tempo. Maria diz:",
+      context: "Maria e Olivia estão conversando sobre a enorme quantidade de trabalho que têm para fazer até o final do ano em tão pouco tempo. Maria diz:",
       utterance: `"O recesso do fim do ano será maravilhoso."`,
       prompt: "Escolha a interpretação mais adequada para o enunciado acima entre as opções a seguir:",
       choices: [
@@ -247,7 +247,7 @@
       choices: [
         "Henrique gosta do moletom",
         "Henrique acha o moletom feio",
-        "enrique adora fazer compras",
+        "Henrique adora fazer compras",
         "Nenhuma das opções"
       ],
       correct_choice_text: "Henrique gosta do moletom"
@@ -371,13 +371,13 @@
 
   timeline.push(jsPsych.randomization.shuffle(trials));
   
-  const final_instructions = {
+  const instructions3 = {
         type: jsPsychHtmlKeyboardResponse,
         stimulus: `
         <p>Obrigada por participar! </p> 
         <p>Por favor, pressione qualquer tecla e preencha o formulário a seguir.</p>` 
     }
-    timeline.push(final_instructions)
+    timeline.push(instructions3)
 
   const demographics = {
 
@@ -390,9 +390,24 @@
     button_label: "Enviar"
   };
   timeline.push(demographics);
+
+  const final_instructions = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: `
+    <p>Obrigado por participar!</p>
+    <p>Clique no botão abaixo para baixar seus dados.</p>
+  `,
+  choices: ["Baixar dados"],
+  on_finish: function () {
+    jsPsych.data.get().localSave("csv", "dados_experimento.csv");
+  }
+};
+
+timeline.push(final_instructions);
   
 
   jsPsych.run(timeline);
 </script>
 </body>
 </html>
+
