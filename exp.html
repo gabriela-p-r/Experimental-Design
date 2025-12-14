@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Experimental Design</title>
+  <script src="dist/jspsych.js"></script>
+  <link href="dist/jspsych.css" rel="stylesheet" type="text/css" />
+  <script src="dist/plugin-html-button-response.js"></script>
+  <script src="dist/plugin-survey-html-form.js"></script>
+  <script src="dist/plugin-html-keyboard-response.js"></script>
+  <style>
+      #jspsych-html-button-response-btngroup {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 100%;
+    }
+
+    .jspsych-html-button-response-button {
+      margin: 6px 0;
+    }
+  </style>
+</head>
+<body></body>
+<script>
+  const jsPsych = initJsPsych({
+    on_finish: function () {
+      jsPsych.data.get().localSave("csv", "text_question_data.csv");
+    },
+  });
+
+  var timeline = [];
+
+  
+  const listNumber = Math.floor(Math.random() * 4) + 1;
+  
+
+  jsPsych.data.addProperties({
+    list: listNumber
+  });
+
+  const consentform = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `
+      <h2 style="text-align:center;">Consentimento</h2>
+      <p style="font-size: 110%;">
+        Você está sendo convidado a participar de um estudo de pesquisa sobre interpretação linguística para um mestrado da Université Paris Cité. A participação é voluntária e você pode desistir a qualquer momento.
+      </p>
+
+      <p style="font-size: 110%;">
+        Durante este estudo, você lerá histórias curtas e responderá a perguntas de múltipla escolha. Suas respostas serão registradas anonimamente e utilizadas apenas para fins de pesquisa.
+      </p>
+
+      <p style="font-size: 110%;">
+        Ao clicar em "Concordo", você indica que:
+      </p>
+
+      <ul style="font-size: 110%;">
+        <p>Você concorda voluntariamente em participar.</p>
+        <p>Você leu e compreendeu as informações acima.</p>
+      </p>
+
+      <p style="font-size: 110%; text-align:center; margin-top: 20px;">
+        Se você concorda em participar, clique no botão abaixo:
+      </p>
+    `,
+    choices: ["Eu concordo em participar"],
+    data: { label: "consent" }
+  };
+  timeline.push(consentform);
+
+  const instructions = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus:
+     `<h2 style="text-align:center;">Instruções</h2>
+      <p>Bem-vindo ao experimento.</p>
+      <p>Você lerá histórias curtas sobre eventos comuns. Após cada história, haverá uma pergunta de múltipla escolha.</p>
+      <p>Leia com atenção e escolha o que o personagem da história está tentando comunicar.</p>
+      <p>Pressione qualquer tecla para começar.</p>
+    `,
+  };
+  timeline.push(instructions);
+
+  const familiarization = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `
+      <h2 style="text-align:center;">Exemplo</h2>
+      <p style="font-size: 110%; margin-bottom: 0;"> Este é um exemplo para te ajudar a entender o experimento:</p>
+      <p style="font-size: 110%; margin-top: 7px;">
+        Ao visitar Carlos, Elaine viu algumas garrafas de azeite de dendê na cozinha e perguntou por que motivo ele tinha tantas. Carlos respondeu: </p>
+      <p style="font-size: 110%; font-style: italic; margin-top: 7px;">
+        "Meu tio mora na Bahia."
+      </p>
+      <p style="font-size: 110%; margin-top: 7px;">
+        Escolha a interpretação mais adequada para o enunciado acima entre as opções a seguir:
+      </p>
+    `,
+    choices: [
+      "O tio de Carlos mandou as garrafas",
+      "O tio de Carlos mora na Bahia",
+      "O tio de Carlos mora em uma casa rural",
+      "Nenhuma das opções"
+    ],
+    data: {
+      label: "familiarization",
+      correct_response: 1,
+      correct_choice_text: "O tio de Carlos mandou as garrafas."
+    },
+    on_finish: function(data) {
+      data.correct = data.response === data.correct_response;
+      data.chosen_text = data.choices ? data.choices[data.response] : null;
+    }
+  };
+  timeline.push(familiarization);
+
+  const instructions2 = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: `
+      <p>Agora podemos começar!</p>
+      <p> Clique em qualquer tecla para prosseguir. </p>
+    `,
+  };
+  timeline.push(instructions2);
+
+
+  var allPossibleTrials = [
+    
+    {
+      item: 1,
+      condition: "marker",
+      label: "IM1",
+      context: "Elza e Marcelo foram ao cinema assistir a um filme de terror. Marcelo, que geralmente tem medo de tudo, diz após o fim do filme:",
+      utterance: `"Que filminho ótimo."`,
+      prompt: "Escolha a interpretação mais adequada para o enunciado acima entre as opções a seguir:",
+      choices: ["Ele não gostou do filme", "Ele gostou do filme", "Ele adora filmes de terror", "Nenhuma das opções"],
+      correct_choice_text: "Ele não gostou do filme"
+    },
+    
+    {
+      item: 1,
+      condition: "no_marker",
+      label: "I1",
+      context: "Elza e Marcelo foram ao cinema assistir a um filme de terror. Marcelo, que geralmente tem medo de tudo, diz após o fim do filme:",
+      utterance: `"Que filme ótimo."`,
+      prompt: "Escolha a interpretação mais adequada para o enunciado acima entre as opções a seguir:",
+      choices: ["Ele não gostou do filme", "Ele gostou do filme", "Ele adora filmes de terror", "Nenhuma das opções"],
+      correct_choice_text: "Ele não gostou do filme"
+    },
+    
+    {
+      item: 2,
+      condition: "marker",
+      label: "IM2",
+      context: "Fernando e Sara foram a uma festa. Sara estava cansada do trabalho e não conhecia ninguém além de Fernando. Quando estão indo embora, ela diz a ele:",
+      utterance: `"Foi uma festa incrível, não é?"`,
+      prompt: "Escolha a interpretação mais adequada para o enunciado acima entre as opções a seguir:",
+      choices: ["Ela não gostou da festa", "Ela acha que a festa foi ótima", "Ela acha que os amigos de Fernando são incríveis", "Nenhuma das opções"],
+      correct_choice_text: "Ela não gostou da festa"
+    },
+    
+    {
+      item: 2,
+      condition: "no_marker",
+      label: "I2",
+      context: "Fernando e Sara foram a uma festa. Sara estava cansada do trabalho e não conhecia ninguém além de Fernando. Quando estão indo embora, ela diz a ele:",
+      utterance: `"Foi uma festa incrível."`,
+      prompt: "Escolha a interpretação mais adequada para o enunciado acima entre as opções a seguir:",
+      choices: ["Ela não gostou da festa", "Ela acha que a festa foi ótima", "Ela acha que os amigos de Fernando são incríveis", "Nenhuma das opções"],
+      correct_choice_text: "Ela não gostou da festa"
+    },
+    
+    {
+      item: 3,
+      condition: "marker",
+      label: "IM3",
+      context: "Maria e Olivia estão conversando sobre a enorme quantidade de trabalho que têm para fazer até o final do ano e como têm pouco tempo. Maria diz:",
+      utterance: `"Nossa, o recesso do fim do ano será maravilhoso"`,
+      prompt: "Escolha a interpretação mais adequada para o enunciado acima entre as opções a seguir:",
+      choices: ["Elas terão que trabalhar durante o recesso", "Elas estão animadas com as festas do final de ano", "Maria adora o recesso", "Nenhuma das opções"],
+      correct_choice_text: "Elas terão que trabalhar durante o recesso"
+    },
+    
+    {
+      item: 3,
+      condition: "no_marker",
+      label: "I3",
+      context: "Maria e Olivia estão conversando sobre a enorme quantidade de trabalho que têm para fazer até o final do ano em tão pouco tempo. Maria diz:",
+      utterance: `"O recesso do fim do ano será maravilhoso."`,
+      prompt: "Escolha a interpretação mais adequada para o enunciado acima entre as opções a seguir:",
+      choices: ["Elas terão que trabalhar durante o recesso", "Elas estão animadas com as festas do final de ano", "Maria adora o recesso", "Nenhuma das opções"],
+      correct_choice_text: "Elas terão que trabalhar durante o recesso"
+    },
+    
+    {
+      item: 4,
+      condition: "marker",
+      label: "IM4",
+      context: "João e Renata estão tentando resolver um problema técnico no computador há horas, mas nada funciona. Após o computador travar novamente, João comenta:",
+      utterance: `"Genial essa solução, eu acho."`,
+      prompt: "Escolha a interpretação mais adequada para o enunciado acima entre as opções a seguir:",
+      choices: ["João considera que a solução não funciona", "João acredita que a solução é boa", "João gosta de consertar computadores", "Nenhuma das opções"],
+      correct_choice_text: "João considera que a solução não funciona"
+    },
+    
+    {
+      item: 4,
+      condition: "no_marker",
+      label: "I4",
+      context: "João e Renata estão tentando resolver um problema técnico no computador há horas, mas nada funciona. Após o computador travar novamente, João comenta:",
+      utterance: `"Genial essa solução, eu acho."`,
+      prompt: "Escolha a interpretação mais adequada para o enunciado acima entre as opções a seguir:",
+      choices: ["João considera que a solução não funciona", "João acredita que a solução é boa", "João gosta de consertar computadores", "Nenhuma das opções"],
+      correct_choice_text: "João considera que a solução não funciona"
+    },
+    
+    {
+      item: "L1",
+      condition: "literal",
+      label: "L1",
+      context: "Enzo e Henrique estão conversando sobre compras. Enzo está pensando em comprar um moletom colorido e pede a opinião do amigo. Henrique diz:",
+      utterance: `"Este moletom é lindo, não é?"`,
+      prompt: "Escolha a interpretação mais adequada para o enunciado acima entre as opções a seguir:",
+      choices: ["Henrique gosta do moletom", "Henrique acha o moletom feio", "Henrique adora fazer compras", "Nenhuma das opções"],
+      correct_choice_text: "Henrique gosta do moletom"
+    },
+    {
+      item: "L2",
+      condition: "literal",
+      label: "L2",
+      context: "Alice acabou de chegar ao escritório pela manhã. Ela olha para a pilha de pastas e papéis em sua mesa e diz:",
+      utterance: `"Bom, acho que preciso dar uma organizada."`,
+      prompt: "Escolha a interpretação mais adequada para o enunciado acima entre as opções a seguir:",
+      choices: ["A mesa de Alice está bagunçada", "Alice acredita que sua mesa está organizada", "Alice não gosta de trabalhar pela manhã", "Nenhuma das opções"],
+      correct_choice_text: "A mesa de Alice está bagunçada"
+    },
+    {
+      item: "L3",
+      condition: "literal",
+      label: "L3",
+      context: "Bella e Marina estão tomando um café. Bella, que geralmente prefere bebidas doces, prova seu café e comenta:",
+      utterance: `"Este café está um pouco amargo demais para mim."`,
+      prompt: "Escolha a interpretação mais adequada para o enunciado acima entre as opções a seguir:",
+      choices: ["Bella não gosta do café", "Bella prefere beber chá", "Bella não gosta de conversar com Marina", "Nenhuma das opções"],
+      correct_choice_text: "Bella não gosta do café"
+    },
+    
+    {
+      item: "F1",
+      condition: "filler",
+      label: "F1",
+      context: " Em um happy hour, um colega de trabalho convidou Carol para beber, e ela disse:",
+      utterance: `"Eu vim de carro"`,
+      prompt: "Escolha a interpretação mais adequada para o enunciado acima entre as opções a seguir:",
+      choices: ["Carol não vai beber álcool", "O carro está no estacionamento", "Carol planeja beber", "Nenhuma das opções"],
+      correct_choice_text: "Carol não vai beber álcool"
+    },
+    {
+      item: "F2",
+      condition: "filler",
+      label: "F2",
+      context: "Mariana e Lucas estão preparando uma apresentação para o trabalho. Ela pergunta a Lucas quando é a apresentação, e ele responde:",
+      utterance: `"Apresentamos na próxima sexta-feira."`,
+      prompt: "Escolha a interpretação mais adequada para o enunciado acima entre as opções a seguir:",
+      choices: ["A apresentação é na próxima sexta-feira", "Lucas não está confiante no trabalho deles e quer adiar a apresentação", "Lucas quer terminar a apresentação hoje", "Nenhuma das opções"],
+      correct_choice_text: "A apresentação é na próxima sexta-feira"
+    },
+    {
+      item: "F3",
+      condition: "filler",
+      label: "F3",
+      context: "Pedro e Ana se encontraram em um café. Enquanto Ana escolhia o que pedir, Pedro disse:",
+      utterance: `"Eu tenho um cupom"`,
+      prompt: "Escolha a interpretação mais adequada para o enunciado acima entre as opções a seguir:",
+      choices: ["Nenhuma das opções", "Pedro deu o cupom para Ana", "Pedro vai guardar o cupom em vez de usá-lo", "Pedro trabalhava meio período em um café"],
+      correct_choice_text: "Nenhuma das opções"
+    },
+    {
+      item: "F4",
+      condition: "filler",
+      label: "F4",
+      context: "Giovanna e Bárbara estão fofocando antes da aula. Bárbara pergunta: \"Quem era aquela pessoa com quem você estava conversando ontem?\". Giovanna responde:",
+      utterance: `"A aula de hoje vai ser tão legal."`,
+      prompt: "Escolha a interpretação mais adequada para o enunciado acima entre as opções a seguir:",
+      choices: ["Ela prefere não discutir o assunto que Bárbara levantou", "Ela acha que a aula é muito interessante", "A pessoa com quem Giovanna estava conversando também frequenta essa aula", "Nenhuma das opções"],
+      correct_choice_text: "Ela prefere não discutir o assunto que Bárbara levantou"
+    }
+  ];
+
+  
+  var selectedTrials = [];
+
+ 
+
+  if (listNumber === 1 || listNumber === 3) {
+    
+    selectedTrials.push(allPossibleTrials.find(t => t.item === 1 && t.condition === "marker"));
+    selectedTrials.push(allPossibleTrials.find(t => t.item === 2 && t.condition === "no_marker"));
+    selectedTrials.push(allPossibleTrials.find(t => t.item === 3 && t.condition === "marker"));
+    selectedTrials.push(allPossibleTrials.find(t => t.item === 4 && t.condition === "no_marker"));
+  } else {
+    
+    selectedTrials.push(allPossibleTrials.find(t => t.item === 1 && t.condition === "no_marker"));
+    selectedTrials.push(allPossibleTrials.find(t => t.item === 2 && t.condition === "marker"));
+    selectedTrials.push(allPossibleTrials.find(t => t.item === 3 && t.condition === "no_marker"));
+    selectedTrials.push(allPossibleTrials.find(t => t.item === 4 && t.condition === "marker"));
+  }
+
+  
+  var literalAndFillers = allPossibleTrials.filter(t => t.condition === "literal" || t.condition === "filler");
+  selectedTrials = selectedTrials.concat(literalAndFillers);
+
+  
+  var trials = selectedTrials.map((trial) => {
+    let shuffled = jsPsych.randomization.shuffle(trial.choices);
+    let correct_index = shuffled.indexOf(trial.correct_choice_text);
+
+    return {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: `
+        <p style="font-size: 110%; margin-bottom: 0;">${trial.context}</p>
+        <p style="font-size: 110%; font-style: italic; margin-top: 7px;">${trial.utterance}</p>
+        <p style="font-size: 110%; margin-top: 7px;">${trial.prompt}</p>
+      `,
+      choices: shuffled,
+      data: {
+        label: trial.label,
+        item: trial.item,
+        condition: trial.condition,
+        correct_response: correct_index,
+        correct_choice_text: trial.correct_choice_text,
+        all_choices: shuffled
+      },
+      on_finish: function (data) {
+        data.correct = data.response === data.correct_response;
+        data.chosen_text = data.all_choices[data.response];
+      },
+    };
+  });
+
+  
+  timeline.push(jsPsych.randomization.shuffle(trials));
+  
+  const instructions3 = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: `
+      <p>Obrigada por participar! </p> 
+      <p>Por favor, pressione qualquer tecla e preencha o formulário a seguir.</p>` 
+  }
+  timeline.push(instructions3)
+
+  const demographics = {
+    type: jsPsychSurveyHtmlForm,
+    preamble: "<h3>Formulário</h3>",
+    html: `<p>Idade: <input type="text" name="age" size="10" required /></p>
+    <p>Gênero: <input type="text" name="gender" size="10" required /></p>`,
+    button_label: "Enviar"
+  };
+  timeline.push(demographics);
+
+  const final_instructions = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `
+      <p>Obrigado por participar!</p>
+      <p>Clique no botão abaixo para baixar seus dados.</p>
+    `,
+    choices: ["Baixar dados"],
+    on_finish: function () {
+      jsPsych.data.get().localSave("csv", "dados_experimento.csv");
+    }
+  };
+
+  timeline.push(final_instructions);
+
+  jsPsych.run(timeline);
+</script>
+</body>
+</html>
